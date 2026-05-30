@@ -1,0 +1,14 @@
+{
+  "name": "complianceops-cloud-prototype",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Clickable ComplianceTech CCM prototype for the product case study.",
+  "scripts": {
+    "build": "node scripts/build.cjs",
+    "dev": "node server.cjs",
+    "start": "node server.cjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
