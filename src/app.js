@@ -103,6 +103,21 @@ const buyerQuestions = [
   }
 ];
 
+const findings = [
+  {
+    id: "find-s3-001",
+    label: "Finding FIND-001",
+    title: "S3 encryption disabled on prod-audit-logs",
+    severity: "high",
+    owner: "ethan",
+    resourceId: "res-s3-prod-logs",
+    testId: "test-s3-encryption",
+    statusWhenOpen: "open",
+    statusWhenResolved: "closed",
+    detail: "AWS CCM alert created an owned remediation finding that blocks SOC 2 auditor handoff until the test passes."
+  }
+];
+
 const auditSnapshot = {
   id: "audit-soc2-q2",
   name: "SOC 2 auditor handoff snapshot",
@@ -266,6 +281,10 @@ function buildModel(demo) {
     ...request,
     status: request.id === "req-zenpay" ? demo.trustAccess : request.statusWhenOpen
   }));
+  const mappedFindings = findings.map((finding) => ({
+    ...finding,
+    status: demo.resolved ? finding.statusWhenResolved : demo.workStatus
+  }));
   const openTests = mappedTests.filter((test) => test.status === "failing");
   const readiness = demo.resolved ? 92 : 84;
   const automation = demo.resolved ? 84 : 78;
@@ -276,6 +295,7 @@ function buildModel(demo) {
     tests: mappedTests,
     documents: mappedDocs,
     trustRequests: mappedRequests,
+    findings: mappedFindings,
     buyerQuestions,
     auditSnapshot: {
       ...auditSnapshot,
@@ -440,6 +460,20 @@ function CompliancePage({ route, model, actions }) {
     ),
     E(
       Panel,
+      { title: "Assessment lifecycle" },
+      E(FlowRail, {
+        steps: [
+          ["Scope", "SOC 2 Type II production systems, identity, code, HR, device, and ticketing sources are selected."],
+          ["Collect evidence", "Integrations and documents generate mapped evidence without manual screenshots."],
+          ["Monitor controls", "Continuous tests evaluate resources and update SOC 2 control status."],
+          ["Create finding", "A failed test becomes an owned remediation finding with Jira and MCP guidance."],
+          ["Freeze snapshot", "Auditor gets an immutable review window with evidence states."],
+          ["Report posture", "Approved status and documents flow into Trust Center reporting."]
+        ]
+      })
+    ),
+    E(
+      Panel,
       { title: "Controls, evidence, and documents" },
       E(
         "div",
@@ -454,6 +488,7 @@ function CompliancePage({ route, model, actions }) {
 
 function WorkPage({ route, model, actions }) {
   const disabledRun = model.demo.workStatus !== "ready_for_review" || model.demo.resolved;
+  const finding = model.findings[0];
   return E(
     "section",
     null,
@@ -469,7 +504,7 @@ function WorkPage({ route, model, actions }) {
       E(
         Panel,
         { title: "Urgent work" },
-        E(WorkItem, { label: "Overdue", title: model.primaryTest.name, detail: model.primaryTest.fix, status: model.demo.workStatus, owner: model.people.ethan.name }),
+        E(WorkItem, { label: finding.label, title: finding.title, detail: `${finding.detail} Fix: ${model.primaryTest.fix}`, status: finding.status, owner: model.people[finding.owner].name }),
         E("div", { className: "workflow-actions" },
           E("button", { className: "primary-button", onClick: actions.startFix, disabled: model.demo.resolved }, "Start fix"),
           E("button", { className: "secondary-button", onClick: actions.markReview, disabled: model.demo.resolved }, "Mark ready for review"),
@@ -558,7 +593,8 @@ function PlatformPage({ model }) {
     E(PageHeader, {
       eyebrow: "Platform",
       title: "Extensible trust infrastructure",
-      description: "The advanced platform features are concise but visible: integrations, Custom Resources API, concurrent token rotation, MCP, audit log, and future TPRM."
+      description: "The advanced platform features are concise but visible: integrations, Custom Resources API, concurrent token rotation, MCP, audit log, and future TPRM.",
+      actions: [E("a", { key: "tokens", className: "primary-button", href: "#token-rotation" }, "Review token rotation")]
     }),
     E(
       "div",
@@ -579,12 +615,16 @@ function PlatformPage({ model }) {
       "div",
       { className: "two-column" },
       E(
-        Panel,
-        { title: "OAuth Token Rotation" },
-        E("p", null, "Concurrent tokens with overlap windows avoid the cascading 401 failure mode caused by one-token-per-app rotation."),
-        E("div", { className: "simple-table compact" },
-          E(TableHeader, { columns: ["Token", "Status", "Expires", "Overlap"] }),
-          model.accessTokens.map((token) => E(Row, { key: token.id, cells: [token.label, E(StatusBadge, { status: token.status }), token.expires, token.overlap] }))
+        "div",
+        { id: "token-rotation" },
+        E(
+          Panel,
+          { title: "OAuth Token Rotation" },
+          E("p", null, "Concurrent tokens with overlap windows avoid the cascading 401 failure mode caused by one-token-per-app rotation."),
+          E("div", { className: "simple-table compact" },
+            E(TableHeader, { columns: ["Token", "Status", "Expires", "Overlap"] }),
+            model.accessTokens.map((token) => E(Row, { key: token.id, cells: [token.label, E(StatusBadge, { status: token.status }), token.expires, token.overlap] }))
+          )
         )
       ),
       E(
@@ -642,9 +682,9 @@ function TestHero({ test, model }) {
 
 function CompletenessList() {
   return E("div", { className: "decision-list" },
-    E(Decision, { title: "PDF requirement", body: "Product shell, CCM deep dive, assessment lifecycle, docs, and cross-module chain are represented." }),
-    E(Decision, { title: "Updated PRD", body: "SOC 2 wedge, Trust Center, MCP, auditor snapshot, API extensibility, and token rotation are now visible." }),
-    E(Decision, { title: "Vanta cross-check", body: "Comparable surfaces are acknowledged, while Aegis leads with developer remediation and better token rotation." })
+    E(Decision, { title: "Product Demo", body: "Navigation, major module hubs, dashboard, assessment lifecycle, and cross-module relationships are represented." }),
+    E(Decision, { title: "CCM Deep Dive", body: "Signal, evidence, control monitoring, findings, integrations, posture, alerts, and reporting are visible." }),
+    E(Decision, { title: "Product Documentation", body: "PRD, user flow, RFC, completeness matrix, and submission document cover assumptions and trade-offs." })
   );
 }
 

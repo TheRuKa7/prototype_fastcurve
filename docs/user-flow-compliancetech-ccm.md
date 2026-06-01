@@ -50,6 +50,7 @@ User sees:
 
 - SOC 2 readiness.
 - Signal-to-status chain.
+- Assessment lifecycle: scope, collect evidence, monitor controls, create finding, freeze snapshot, report posture.
 - Auditor snapshot.
 - Evidence states: Not Ready, Ready for audit, Approved, Flagged, N/A.
 - Controls, tests, evidence, and documents in one table.
@@ -75,6 +76,7 @@ User sees:
 - Integration coverage.
 - Custom Resources API full-state sync example.
 - OAuth token rotation with concurrent active tokens.
+- MCP server and append-only audit log.
 - Future sequencing for TPRM, privacy, and enterprise BU scoping.
 
 ## Success Criteria

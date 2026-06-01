@@ -26,6 +26,8 @@ The app includes PRD-specific mock entities:
 - `TrustCenterRequest`
 - `BuyerQuestion`
 - `AuditSnapshot`
+- `Finding`
+- `RemediationTask` represented through My Work state and remediation actions
 - `ApiApplication`
 - `AccessToken`
 - `McpTool`

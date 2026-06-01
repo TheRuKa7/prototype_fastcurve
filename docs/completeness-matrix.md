@@ -6,7 +6,7 @@
 |---|---|
 | Navigation and information architecture | Covered with five simple hubs. |
 | Side menu and major module pages | Covered through Overview, Compliance, My Work, Trust Center, Platform. |
-| Example assessment lifecycle | Covered through SOC 2 readiness and auditor snapshot. |
+| Example assessment lifecycle | Covered through the Compliance page lifecycle: scope, evidence, monitoring, finding, snapshot, reporting. |
 | Dashboard experience | Covered through the Overview cockpit. |
 | Cross-module relationships | Covered through Signal -> Evidence -> Control -> Assessment -> Framework -> Compliance Status. |
 | CCM deep dive | Covered through failing test, evidence, remediation, and status rollup. |
@@ -14,9 +14,9 @@
 | Evidence collection | Covered through automated evidence and document lifecycle. |
 | Integrations | Covered through Platform integration cards. |
 | Compliance posture | Covered through SOC 2 readiness score. |
-| Alerting/findings | Covered through My Work and failing test workflow. |
+| Alerting/findings | Covered through My Work, Finding FIND-001, and failing test workflow. |
 | Reporting | Covered through Trust Center and auditor snapshot surfaces. |
-| Product documentation | Covered through PRD, user flow, RFC, and this matrix. |
+| Product documentation | Covered through PRD, user flow, RFC, supporting document, and this matrix. |
 | Extensibility/trade-offs | Covered through Custom Resources API, token rotation, and phased non-goals. |
 
 ## Updated Aegis PRD

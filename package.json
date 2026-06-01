@@ -1,8 +1,8 @@
 {
-  "name": "complianceops-cloud-prototype",
+  "name": "aegis-continuous-trust-prototype",
   "version": "1.0.0",
   "private": true,
-  "description": "Clickable ComplianceTech CCM prototype for the product case study.",
+  "description": "Clickable Aegis Continuous Trust Management prototype for the ComplianceTech CCM case study.",
   "scripts": {
     "build": "node scripts/build.cjs",
     "dev": "node server.cjs",

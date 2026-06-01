@@ -19,6 +19,30 @@ Signal -> Evidence -> Control -> Assessment -> Framework -> Compliance Status
 - External auditor: reviews frozen evidence snapshots and stable control mappings.
 - Prospective buyer: self-serves approved Trust Center content and asks cited AI questions.
 
+## Assumptions
+
+- The first wedge is mid-market B2B SaaS companies with 50 to 500 employees pursuing their first SOC 2 Type II.
+- The buyer already has common SaaS and infrastructure systems: AWS, GitHub, Okta, an HRIS, an MDM, and Jira or Linear.
+- The case-study prototype is evaluated on product thinking, workflow clarity, and demo completeness, not production backend depth.
+- Trust Center and MCP remediation are the strongest differentiators and should be visible in the first demo path.
+- TPRM, privacy, and enterprise business-unit scoping matter later, but they are not required to win the first SOC 2 wedge.
+
+## Domain Model
+
+- Resource: a monitored asset such as an S3 bucket, GitHub repository, user, laptop, employee record, or custom resource.
+- Test: a continuous monitoring rule evaluated against resources.
+- TestRun: a timestamped result from a test evaluation.
+- Evidence: a normalized record proving a test or document state at a point in time.
+- Control: an internal safeguard, mapped to one or more frameworks.
+- Assessment: the scoped evaluation of controls and evidence for a period.
+- Framework: SOC 2 first, with ISO 27001 and HIPAA later through many-to-many control mapping.
+- Finding: an owned failure or gap created from a failed test or auditor flag.
+- Document: policy or file evidence with lifecycle, renewal, and approval state.
+- AuditSnapshot: an immutable auditor-facing view of evidence and status.
+- TrustCenterRequest: a buyer request for gated evidence or reports.
+- ApiApplication and AccessToken: public API clients with safe token rotation.
+- McpTool: IDE-accessible remediation tools such as `list_tests`, `list_test_entities`, and `get_remediation`.
+
 ## P0 Capabilities
 
 - SOC 2-focused integration and ingestion engine for AWS, GitHub, Okta, Gusto, MDM, Jira, and related evidence sources.

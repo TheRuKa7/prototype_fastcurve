@@ -2,6 +2,13 @@
 
 This workspace contains a clickable Aegis prototype: a simplified Continuous Trust Management platform for mid-market B2B SaaS companies pursuing SOC 2 Type II.
 
+## Submission Packet
+
+- Prototype repository: https://github.com/TheRuKa7/prototype_fastcurve
+- Primary supporting document: [docs/submission-supporting-document.md](docs/submission-supporting-document.md)
+- Product docs: PRD, user flow, RFC, and completeness matrix in [docs](docs)
+- Optional architecture diagrams: included in the supporting document
+
 ## Run Locally
 
 Use Node 20+:
