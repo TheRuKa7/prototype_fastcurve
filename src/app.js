@@ -152,12 +152,22 @@ const auditEvents = [
   { id: "evt-trust", actor: "Maya Patel", action: "Trust access approved", detail: "ZenPay granted expiring SOC 2 report access after NDA" }
 ];
 
+const publicDocs = [
+  { slug: "submission", title: "Submission brief", file: "submission-supporting-document.md", description: "Executive summary, scope, architecture diagrams, and known limits." },
+  { slug: "demo-guide", title: "Product demo guide", file: "product-demo-user-guide.md", description: "Interview walkthrough and deliverable mapping." },
+  { slug: "prd", title: "Product requirements", file: "prd-compliancetech-ccm.md", description: "Vision, assumptions, users, MVP boundaries, and trade-offs." },
+  { slug: "journey", title: "User journey", file: "user-flow-compliancetech-ccm.md", description: "End-to-end SOC 2, remediation, auditor, and Trust Center flow." },
+  { slug: "rfc", title: "Prototype RFC", file: "rfc-compliancetech-ccm-prototype.md", description: "Routes, state model, mock entities, and verification plan." },
+  { slug: "coverage", title: "Completeness matrix", file: "completeness-matrix.md", description: "Requirement-by-requirement coverage against the case study." }
+];
+
 const navItems = [
   { label: "Overview", path: "/overview", token: "O" },
   { label: "Compliance", path: "/compliance", token: "C" },
   { label: "My Work", path: "/work", token: "W" },
   { label: "Trust Center", path: "/trust-center", token: "T" },
-  { label: "Platform", path: "/platform", token: "P" }
+  { label: "Platform", path: "/platform", token: "P" },
+  { label: "Docs", path: "/docs", token: "D" }
 ];
 
 const routeAliases = {
@@ -181,7 +191,8 @@ const routeAliases = {
   "/reports": "/trust-center",
   "/reports/soc2-readiness-summary": "/trust-center",
   "/integrations": "/platform",
-  "/admin/scopes": "/platform"
+  "/admin/scopes": "/platform",
+  "/documentation": "/docs"
 };
 
 const statusLabels = {
@@ -324,6 +335,7 @@ function renderPage(path, route, model, actions) {
   if (path === "/work") return E(WorkPage, { route, model, actions });
   if (path === "/trust-center") return E(TrustCenterPage, { route, model, actions });
   if (path === "/platform") return E(PlatformPage, { route, model, actions });
+  if (path.startsWith("/docs")) return E(DocsPage, { route });
   return E(OverviewPage, { route, model, actions });
 }
 
@@ -665,6 +677,77 @@ function PlatformPage({ model }) {
   );
 }
 
+function DocsPage({ route }) {
+  const slug = route.path.split("/")[2] || publicDocs[0].slug;
+  const activeDoc = publicDocs.find((doc) => doc.slug === slug) || publicDocs[0];
+  const [content, setContent] = useState("");
+  const [status, setStatus] = useState("loading");
+
+  useEffect(() => {
+    let cancelled = false;
+    setStatus("loading");
+    fetch(`/docs/${activeDoc.file}`)
+      .then((response) => {
+        if (!response.ok) throw new Error("Document unavailable");
+        return response.text();
+      })
+      .then((text) => {
+        if (!cancelled) {
+          setContent(text);
+          setStatus("ready");
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setContent("This document could not be loaded. Please open the repository docs folder.");
+          setStatus("error");
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [activeDoc.file]);
+
+  return E(
+    "section",
+    null,
+    E(PageHeader, {
+      eyebrow: "Docs",
+      title: "Evaluation materials",
+      description: "Shareable product documentation for the PM interview: strategy, demo guide, user journey, architecture, and requirements coverage.",
+      actions: [E("a", { key: "repo", className: "secondary-button", href: "https://github.com/TheRuKa7/prototype_fastcurve", target: "_blank", rel: "noreferrer" }, "Open repository")]
+    }),
+    E(
+      "div",
+      { className: "docs-layout" },
+      E(
+        "aside",
+        { className: "docs-list", "aria-label": "Documentation files" },
+        publicDocs.map((doc) =>
+          E(
+            "button",
+            {
+              key: doc.slug,
+              className: doc.slug === activeDoc.slug ? "doc-selector active" : "doc-selector",
+              onClick: () => route.navigate(`/docs/${doc.slug}`)
+            },
+            E("strong", null, doc.title),
+            E("span", null, doc.description)
+          )
+        )
+      ),
+      E(
+        "article",
+        { className: "doc-viewer", "aria-live": "polite" },
+        E("div", { className: "doc-viewer-header" }, E("span", { className: "mini-label" }, activeDoc.file), E("h2", null, activeDoc.title)),
+        status === "loading"
+          ? E("p", { className: "doc-loading" }, "Loading document...")
+          : E(MarkdownDocument, { markdown: content })
+      )
+    )
+  );
+}
+
 function PageHeader({ eyebrow, title, description, actions = [] }) {
   return E("div", { className: "page-header" }, E("div", null, E("span", { className: "eyebrow" }, eyebrow), E("h1", null, title), E("p", null, description)), actions.length ? E("div", { className: "page-actions" }, actions) : null);
 }
@@ -710,6 +793,135 @@ function IntegrationCard({ integration }) {
 
 function CodeBlock({ code }) {
   return E("pre", { className: "code-block" }, E("code", null, code));
+}
+
+function MarkdownDocument({ markdown }) {
+  return E("div", { className: "markdown-body" }, parseMarkdown(markdown));
+}
+
+function parseMarkdown(markdown) {
+  const lines = markdown.replace(/\r\n/g, "\n").split("\n");
+  const nodes = [];
+  let index = 0;
+  let key = 0;
+
+  while (index < lines.length) {
+    const line = lines[index];
+    if (!line.trim()) {
+      index += 1;
+      continue;
+    }
+
+    if (line.startsWith("```")) {
+      const language = line.replace(/```/, "").trim();
+      const code = [];
+      index += 1;
+      while (index < lines.length && !lines[index].startsWith("```")) {
+        code.push(lines[index]);
+        index += 1;
+      }
+      index += 1;
+      nodes.push(E("div", { className: "markdown-code-wrap", key: `code-${key++}` }, language ? E("span", { className: "mini-label" }, language) : null, E(CodeBlock, { code: code.join("\n") })));
+      continue;
+    }
+
+    const heading = line.match(/^(#{1,4})\s+(.*)$/);
+    if (heading) {
+      const level = heading[1].length;
+      const Tag = `h${Math.min(level + 1, 5)}`;
+      nodes.push(E(Tag, { key: `heading-${key++}` }, renderInline(heading[2])));
+      index += 1;
+      continue;
+    }
+
+    if (isTableStart(lines, index)) {
+      const tableLines = [lines[index]];
+      index += 2;
+      while (index < lines.length && lines[index].includes("|") && lines[index].trim()) {
+        tableLines.push(lines[index]);
+        index += 1;
+      }
+      nodes.push(renderTable(tableLines, `table-${key++}`));
+      continue;
+    }
+
+    if (/^\s*[-*]\s+/.test(line)) {
+      const items = [];
+      while (index < lines.length && /^\s*[-*]\s+/.test(lines[index])) {
+        items.push(lines[index].replace(/^\s*[-*]\s+/, ""));
+        index += 1;
+      }
+      nodes.push(E("ul", { key: `ul-${key++}` }, items.map((item, itemIndex) => E("li", { key: itemIndex }, renderInline(item)))));
+      continue;
+    }
+
+    if (/^\s*\d+\.\s+/.test(line)) {
+      const items = [];
+      while (index < lines.length && /^\s*\d+\.\s+/.test(lines[index])) {
+        items.push(lines[index].replace(/^\s*\d+\.\s+/, ""));
+        index += 1;
+      }
+      nodes.push(E("ol", { key: `ol-${key++}` }, items.map((item, itemIndex) => E("li", { key: itemIndex }, renderInline(item)))));
+      continue;
+    }
+
+    const paragraph = [line.trim()];
+    index += 1;
+    while (index < lines.length && lines[index].trim() && !/^(#{1,4})\s+/.test(lines[index]) && !lines[index].startsWith("```") && !/^\s*[-*]\s+/.test(lines[index]) && !/^\s*\d+\.\s+/.test(lines[index]) && !isTableStart(lines, index)) {
+      paragraph.push(lines[index].trim());
+      index += 1;
+    }
+    nodes.push(E("p", { key: `p-${key++}` }, renderInline(paragraph.join(" "))));
+  }
+
+  return nodes;
+}
+
+function isTableStart(lines, index) {
+  return Boolean(lines[index] && lines[index].includes("|") && lines[index + 1] && /^\s*\|?[\s:-]+\|[\s|:-]*$/.test(lines[index + 1]));
+}
+
+function splitTableRow(line) {
+  return line.trim().replace(/^\|/, "").replace(/\|$/, "").split("|").map((cell) => cell.trim());
+}
+
+function renderTable(tableLines, key) {
+  const [headerLine, ...rowLines] = tableLines;
+  const headers = splitTableRow(headerLine);
+  return E(
+    "div",
+    { className: "markdown-table-wrap", key },
+    E(
+      "table",
+      { className: "markdown-table" },
+      E("thead", null, E("tr", null, headers.map((header, index) => E("th", { key: index }, renderInline(header))))),
+      E("tbody", null, rowLines.map((row, rowIndex) => E("tr", { key: rowIndex }, splitTableRow(row).map((cell, cellIndex) => E("td", { key: cellIndex }, renderInline(cell))))))
+    )
+  );
+}
+
+function renderInline(text) {
+  const segments = [];
+  const pattern = /(\[[^\]]+\]\([^)]+\)|`[^`]+`|\*\*[^*]+\*\*)/g;
+  let lastIndex = 0;
+  let match;
+  let key = 0;
+
+  while ((match = pattern.exec(text)) !== null) {
+    if (match.index > lastIndex) segments.push(text.slice(lastIndex, match.index));
+    const token = match[0];
+    if (token.startsWith("[") && token.includes("](")) {
+      const [, label, href] = token.match(/^\[([^\]]+)\]\(([^)]+)\)$/) || [];
+      segments.push(E("a", { key: `link-${key++}`, href, target: href.startsWith("http") ? "_blank" : undefined, rel: href.startsWith("http") ? "noreferrer" : undefined }, label));
+    } else if (token.startsWith("`")) {
+      segments.push(E("code", { key: `inline-code-${key++}` }, token.slice(1, -1)));
+    } else if (token.startsWith("**")) {
+      segments.push(E("strong", { key: `strong-${key++}` }, token.slice(2, -2)));
+    }
+    lastIndex = pattern.lastIndex;
+  }
+  if (lastIndex < text.length) segments.push(text.slice(lastIndex));
+  return segments;
 }
 
 function ScoreRing({ score }) {

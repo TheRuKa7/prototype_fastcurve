@@ -5,6 +5,7 @@ This workspace contains a clickable Aegis prototype: a simplified Continuous Tru
 ## Submission Packet
 
 - Prototype repository: https://github.com/TheRuKa7/prototype_fastcurve
+- In-product docs section: `/docs`
 - Primary supporting document: [docs/submission-supporting-document.md](docs/submission-supporting-document.md)
 - Product demo user guide: [docs/product-demo-user-guide.md](docs/product-demo-user-guide.md)
 - Product docs: PRD, user flow, RFC, and completeness matrix in [docs](docs)
