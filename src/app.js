@@ -194,8 +194,7 @@ const navItems = [
   { label: "Compliance", path: "/compliance", token: "C" },
   { label: "My Work", path: "/work", token: "W" },
   { label: "Trust Center", path: "/trust-center", token: "T" },
-  { label: "Platform", path: "/platform", token: "P" },
-  { label: "Docs", path: "/docs", token: "D" }
+  { label: "Platform", path: "/platform", token: "P" }
 ];
 
 const routeAliases = {
@@ -294,6 +293,10 @@ function App() {
     refreshSnapshot: () => setDemo((value) => ({ ...value, snapshot: "ready" })),
     reset: () => setDemo(defaultDemo)
   };
+
+  if (route.path.startsWith("/docs")) {
+    return E("main", { className: "docs-page-shell" }, E(DocsPage, { route }));
+  }
 
   return E(
     "div",
@@ -425,7 +428,12 @@ function TopBar({ actions }) {
     "header",
     { className: "top-bar" },
     E("div", { className: "search-box" }, E("span", null, "Search tests, controls, evidence"), E("kbd", null, "/")),
-    E("div", { className: "top-actions" }, E("span", { className: "env-pill" }, "Acme Financial Services"), E("button", { className: "ghost-button", onClick: actions.reset }, "Reset workspace"), E("div", { className: "avatar" }, "MP"))
+    E("div", { className: "top-actions" },
+      E("span", { className: "env-pill" }, "Acme Financial Services"),
+      E("a", { className: "secondary-button", href: "/docs", target: "_blank", rel: "noreferrer" }, "Evaluation docs"),
+      E("button", { className: "ghost-button", onClick: actions.reset }, "Reset workspace"),
+      E("div", { className: "avatar" }, "MP")
+    )
   );
 }
 
@@ -483,8 +491,7 @@ function OverviewPage({ route, model }) {
         E(ShortcutCard, { route, to: "/compliance", title: "Compliance", detail: "Controls, evidence, documents, assessment lifecycle, and auditor snapshot.", meta: `${model.metrics.readiness}% ready` }),
         E(ShortcutCard, { route, to: "/work", title: "My Work", detail: "Findings, ownership, remediation state, and MCP-generated fix output.", meta: `${model.metrics.failingTests} open finding` }),
         E(ShortcutCard, { route, to: "/trust-center", title: "Trust Center", detail: "Gated SOC 2 report, buyer activity, questionnaire workflow, and cited answers.", meta: `${model.metrics.trustDeflection} deflection` }),
-        E(ShortcutCard, { route, to: "/platform", title: "Platform", detail: "Integrations, Custom Resources API, token rotation, MCP server, and audit log.", meta: `${model.integrations.length} integrations` }),
-        E(ShortcutCard, { route, to: "/docs", title: "Docs", detail: "Submission brief, product requirements, user journey, RFC, and coverage matrix.", meta: "Interview ready" })
+        E(ShortcutCard, { route, to: "/platform", title: "Platform", detail: "Integrations, Custom Resources API, token rotation, MCP server, and audit log.", meta: `${model.integrations.length} integrations` })
       )
     ),
     E(
@@ -545,7 +552,7 @@ function CompliancePage({ route, model, actions }) {
     E(PageHeader, {
       eyebrow: "Compliance",
       title: "SOC 2 end to end",
-      description: "The compliance surface is intentionally narrow: SOC 2 readiness, evidence automation, document lifecycle, and auditor handoff.",
+      description: "Manage SOC 2 scope, controls, evidence, document state, assessment progress, and auditor handoff from one workspace.",
       actions: [E(ActionButton, { key: "auditor", route, to: "/compliance/soc2", label: "Review auditor snapshot" })]
     }),
     E(
@@ -625,7 +632,7 @@ function WorkPage({ route, model, actions }) {
       E(
         Panel,
         { title: "MCP remediation" },
-        E("p", null, "These are the product's signature developer tools. They let Claude Code or Cursor query trust state and produce fixes in the repo."),
+        E("p", null, "Engineers can query failing tests, affected entities, and remediation guidance from their IDE or ticket workflow."),
         E("div", { className: "tool-list" }, model.mcpTools.map((tool) => E("div", { className: "tool-card", key: tool.id }, E("strong", null, tool.name), E("span", null, tool.purpose)))),
         E(CodeBlock, {
           code: `# get_remediation(test-s3-encryption)\nresource \"aws_s3_bucket_server_side_encryption_configuration\" \"prod_audit_logs\" {\n  bucket = aws_s3_bucket.prod_audit_logs.id\n  rule { apply_server_side_encryption_by_default { sse_algorithm = \"AES256\" } }\n}\n\naws s3api put-bucket-encryption --bucket prod-audit-logs --server-side-encryption-configuration file://encryption.json`
@@ -775,7 +782,7 @@ function PlatformPage({ model }) {
       E(
         Panel,
         { title: "Risk and vendor watchlist" },
-        E("p", null, "Aegis keeps a concise risk view in the SOC 2 wedge while sequencing deep TPRM for a later release."),
+        E("p", null, "Track the risk items and vendor signals that affect SOC 2 readiness and buyer trust."),
         E("div", { className: "simple-table compact" },
           E(TableHeader, { columns: ["Risk", "Area", "Owner", "Status"] }),
           model.riskSignals.map((risk) => E(Row, { key: risk.id, cells: [risk.title, risk.area, risk.owner, E(StatusBadge, { status: risk.status })] }))
@@ -787,11 +794,11 @@ function PlatformPage({ model }) {
       { className: "two-column" },
       E(
         Panel,
-        { title: "Sequenced later" },
+        { title: "Program coverage" },
         E("div", { className: "decision-list" },
-          E(Decision, { title: "Thin TPRM in MVP", body: "Vendor inventory exists, but agentic vendor reviews move to phase 3." }),
-          E(Decision, { title: "Privacy suite later", body: "DPIA, ROPA, and full risk register stay out of the SOC 2 wedge." }),
-          E(Decision, { title: "Enterprise BU UI later", body: "Tenant and business-unit columns are in the model, but the admin UX waits." })
+          E(Decision, { title: "Vendor inventory", body: "Critical vendors are tracked for SOC 2 evidence and buyer security reviews." }),
+          E(Decision, { title: "Privacy records", body: "Data handling notes are linked to policies and Trust Center answers." }),
+          E(Decision, { title: "Business units", body: "Current scope is Acme Financial Services production environment." })
         )
       )
     )
@@ -831,12 +838,15 @@ function DocsPage({ route }) {
 
   return E(
     "section",
-    null,
+    { className: "docs-standalone" },
     E(PageHeader, {
       eyebrow: "Docs",
       title: "Evaluation materials",
       description: "Shareable product documentation for the PM interview: strategy, demo guide, user journey, architecture, and requirements coverage.",
-      actions: [E("a", { key: "repo", className: "secondary-button", href: "https://github.com/TheRuKa7/prototype_fastcurve", target: "_blank", rel: "noreferrer" }, "Open repository")]
+      actions: [
+        E("a", { key: "app", className: "primary-button", href: "/overview" }, "Open product"),
+        E("a", { key: "repo", className: "secondary-button", href: "https://github.com/TheRuKa7/prototype_fastcurve", target: "_blank", rel: "noreferrer" }, "Open repository")
+      ]
     }),
     E(
       "div",

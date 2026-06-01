@@ -51,6 +51,12 @@ a:focus-visible {
   grid-template-columns: 248px minmax(0, 1fr);
 }
 
+.docs-page-shell {
+  min-height: 100vh;
+  padding: 28px;
+  background: var(--bg);
+}
+
 .sidebar {
   position: sticky;
   top: 0;
@@ -363,7 +369,7 @@ kbd {
 
 .shortcut-grid {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 12px;
 }
 
@@ -852,7 +858,7 @@ kbd {
   }
 
   .nav-list {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(5, minmax(0, 1fr));
   }
 
   .docs-layout {
@@ -883,7 +889,8 @@ kbd {
 @media (max-width: 760px) {
   .content-wrap,
   .top-bar,
-  .sidebar {
+  .sidebar,
+  .docs-page-shell {
     padding-left: 16px;
     padding-right: 16px;
   }
@@ -936,5 +943,11 @@ kbd {
 
   .page-header h1 {
     font-size: 34px;
+  }
+}
+
+@media (max-width: 520px) {
+  .nav-list {
+    grid-template-columns: 1fr;
   }
 }
