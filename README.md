@@ -1,6 +1,6 @@
-# ComplianceOps Cloud Prototype
+# Aegis Continuous Trust Prototype
 
-This workspace contains a clickable ComplianceTech / GRC SaaS prototype with a deep Continuous Compliance Monitoring flow.
+This workspace contains a clickable Aegis prototype: a simplified Continuous Trust Management platform for mid-market B2B SaaS companies pursuing SOC 2 Type II.
 
 ## Run Locally
 
@@ -38,10 +38,19 @@ The build script copies the static app into `dist/` and creates an SPA redirect 
 
 ## Main Walkthrough
 
-Dashboard -> SOC 2 framework -> AC-01 control -> CCM rule -> Okta signal -> evidence -> finding -> remediation -> report
+Overview -> My Work -> MCP remediation -> Compliance auditor snapshot -> Trust Center buyer access -> Platform extensibility
 
 The core chain is:
 
 ```text
 Signal -> Evidence -> Control -> Assessment -> Framework -> Compliance Status
 ```
+
+## Demo Script
+
+1. Start on Overview and point out the SOC 2-first wedge.
+2. Click `Fix failing SOC 2 test`.
+3. Use My Work to start the fix, mark it ready for review, and run the check.
+4. Open Compliance to show the auditor snapshot and evidence states.
+5. Open Trust Center to approve gated SOC 2 access and a cited AI answer.
+6. Open Platform to show integrations, Custom Resources API, token rotation, and MCP positioning.
