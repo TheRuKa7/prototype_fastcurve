@@ -368,7 +368,8 @@ kbd {
 
 .flow-rail,
 .decision-list,
-.tool-list {
+.tool-list,
+.setup-list {
   display: grid;
   gap: 12px;
 }
@@ -502,6 +503,7 @@ kbd {
 .status-ready,
 .status-approved,
 .status-connected,
+.status-complete,
 .status-active,
 .status-closed {
   background: var(--green-soft);
@@ -509,12 +511,14 @@ kbd {
 }
 
 .status-failing,
+.status-blocked,
 .status-not_ready {
   background: var(--red-soft);
   color: var(--red);
 }
 
 .status-pending,
+.status-waiting,
 .status-needs_attention,
 .status-open,
 .status-in_progress,
@@ -604,6 +608,40 @@ kbd {
 .work-item small,
 .tool-card span {
   color: var(--muted);
+}
+
+.setup-step {
+  display: grid;
+  grid-template-columns: 12px minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fbfcfd;
+}
+
+.setup-step p {
+  margin: 3px 0 0;
+}
+
+.setup-status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--amber);
+}
+
+.setup-complete .setup-status-dot {
+  background: var(--green);
+}
+
+.setup-blocked .setup-status-dot {
+  background: var(--red);
+}
+
+.compact-flow {
+  gap: 8px;
 }
 
 .docs-layout {
@@ -807,6 +845,15 @@ kbd {
   .table-row,
   .simple-table.compact .table-row {
     grid-template-columns: 1fr;
+  }
+
+  .setup-step {
+    grid-template-columns: 12px minmax(0, 1fr);
+  }
+
+  .setup-step .badge {
+    grid-column: 2;
+    justify-self: start;
   }
 
   .primary-button,

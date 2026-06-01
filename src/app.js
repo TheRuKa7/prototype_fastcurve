@@ -152,6 +152,34 @@ const auditEvents = [
   { id: "evt-trust", actor: "Maya Patel", action: "Trust access approved", detail: "ZenPay granted expiring SOC 2 report access after NDA" }
 ];
 
+const setupSteps = [
+  { title: "Connect systems", status: "complete", detail: "AWS, GitHub, Okta, Gusto, Jamf, and Jira connected." },
+  { title: "Confirm SOC 2 scope", status: "complete", detail: "Production infrastructure, workforce identity, code, HR, and devices included." },
+  { title: "Resolve high finding", statusWhenOpen: "blocked", statusWhenResolved: "complete", detail: "S3 encryption finding blocks auditor handoff." },
+  { title: "Freeze auditor snapshot", statusWhenOpen: "waiting", statusWhenResolved: "complete", detail: "Evidence review window is prepared after remediation." },
+  { title: "Publish Trust Center", statusWhenOpen: "waiting", statusWhenResolved: "complete", detail: "Buyer-facing report access goes live after approval." }
+];
+
+const questionnaireSteps = [
+  { title: "Intake", detail: "ZenPay request and SOC 2 report question are captured from the Trust Center." },
+  { title: "Draft answer", detail: "AI drafts the response from approved evidence and policies only." },
+  { title: "Delegate", detail: "Unanswered technical items route to the accountable owner." },
+  { title: "Approve", detail: "GRC owner approves the final answer before sharing." },
+  { title: "Report", detail: "Aegis tracks turnaround time, deflection, and revenue impact." }
+];
+
+const buyerActivity = [
+  { id: "act-zenpay", company: "ZenPay", action: "Requested SOC 2 report", signal: "$180K ARR opportunity", status: "pending" },
+  { id: "act-metrobank", company: "MetroBank Labs", action: "Viewed encryption posture", signal: "Procurement review", status: "approved" },
+  { id: "act-nova", company: "Nova Analytics", action: "Asked AI about data retention", signal: "New enterprise trial", status: "ready" }
+];
+
+const riskSignals = [
+  { id: "risk-s3", title: "Audit evidence bucket encryption", area: "Infrastructure", owner: "Ethan Brooks", statusWhenOpen: "open", statusWhenResolved: "closed" },
+  { id: "risk-jamf", title: "MDM connector needs attention", area: "Device security", owner: "Maya Patel", statusWhenOpen: "in_progress", statusWhenResolved: "in_progress" },
+  { id: "risk-vendor", title: "Vendor review depth", area: "TPRM", owner: "Maya Patel", statusWhenOpen: "ready", statusWhenResolved: "ready" }
+];
+
 const publicDocs = [
   { slug: "submission", title: "Submission brief", file: "submission-supporting-document.md", description: "Executive summary, scope, architecture diagrams, and known limits." },
   { slug: "demo-guide", title: "Product demo guide", file: "product-demo-user-guide.md", description: "Interview walkthrough and deliverable mapping." },
@@ -198,6 +226,9 @@ const routeAliases = {
 const statusLabels = {
   passing: "Passing",
   failing: "Failing",
+  blocked: "Blocked",
+  waiting: "Waiting",
+  complete: "Complete",
   ready: "Ready",
   approved: "Approved",
   not_ready: "Not ready",
@@ -299,6 +330,14 @@ function buildModel(demo) {
   const openTests = mappedTests.filter((test) => test.status === "failing");
   const readiness = demo.resolved ? 92 : 84;
   const automation = demo.resolved ? 84 : 78;
+  const mappedSetupSteps = setupSteps.map((step) => ({
+    ...step,
+    status: step.status || (demo.resolved ? step.statusWhenResolved : step.statusWhenOpen)
+  }));
+  const mappedRiskSignals = riskSignals.map((risk) => ({
+    ...risk,
+    status: demo.resolved ? risk.statusWhenResolved : risk.statusWhenOpen
+  }));
   return {
     people,
     integrations,
@@ -317,6 +356,10 @@ function buildModel(demo) {
     accessTokens,
     mcpTools,
     auditEvents,
+    setupSteps: mappedSetupSteps,
+    questionnaireSteps,
+    buyerActivity,
+    riskSignals: mappedRiskSignals,
     primaryTest: { ...primaryTest, status: testStatus },
     metrics: {
       readiness,
@@ -359,7 +402,8 @@ function Sidebar({ route }) {
             key: item.path,
             href: item.path,
             className: route.path === item.path || route.path.startsWith(item.path + "/") ? "nav-link active" : "nav-link",
-            onClick: linkTo(route, item.path)
+            onClick: linkTo(route, item.path),
+            "aria-current": route.path === item.path || route.path.startsWith(item.path + "/") ? "page" : undefined
           },
           E("span", { className: "nav-token" }, item.token),
           E("span", null, item.label)
@@ -408,6 +452,11 @@ function OverviewPage({ route, model }) {
       { className: "two-column" },
       E(
         Panel,
+        { title: "Setup progress" },
+        E("div", { className: "setup-list" }, model.setupSteps.map((step) => E(SetupStep, { key: step.title, step })))
+      ),
+      E(
+        Panel,
         { title: "SOC 2 launch plan" },
         E(FlowRail, {
           steps: [
@@ -419,7 +468,11 @@ function OverviewPage({ route, model }) {
             ["Publish trust", "Approved posture and gated documents are shared through Trust Center."]
           ]
         })
-      ),
+      )
+    ),
+    E(
+      "div",
+      { className: "two-column" },
       E(
         Panel,
         { title: "Program priorities" },
@@ -603,6 +656,24 @@ function TrustCenterPage({ model, actions }) {
         )
       )
     ),
+    E(
+      "div",
+      { className: "two-column" },
+      E(
+        Panel,
+        { title: "Questionnaire workflow" },
+        E("p", null, "Security reviews follow a clear path from intake to approved answer, with AI drafting but a human approval step before anything leaves the company."),
+        E("div", { className: "flow-rail compact-flow" }, model.questionnaireSteps.map((step, index) => E("div", { className: "flow-step", key: step.title }, E("span", null, index + 1), E("div", null, E("strong", null, step.title), E("p", null, step.detail)))))
+      ),
+      E(
+        Panel,
+        { title: "Buyer activity" },
+        E("div", { className: "simple-table compact" },
+          E(TableHeader, { columns: ["Company", "Activity", "Signal", "Status"] }),
+          model.buyerActivity.map((activity) => E(Row, { key: activity.id, cells: [activity.company, activity.action, activity.signal, E(StatusBadge, { status: activity.status })] }))
+        )
+      )
+    ),
     E(Panel, { title: "Public posture preview" }, E(TrustPreview, { model }))
   );
 }
@@ -664,6 +735,19 @@ function PlatformPage({ model }) {
         E("p", null, "Every control evaluation, remediation action, access approval, and snapshot refresh is retained for auditor review and future SIEM streaming."),
         E("div", { className: "decision-list" }, model.auditEvents.map((event) => E(Decision, { key: event.id, title: `${event.actor}: ${event.action}`, body: event.detail })))
       ),
+      E(
+        Panel,
+        { title: "Risk and vendor watchlist" },
+        E("p", null, "Aegis keeps a concise risk view in the SOC 2 wedge while sequencing deep TPRM for a later release."),
+        E("div", { className: "simple-table compact" },
+          E(TableHeader, { columns: ["Risk", "Area", "Owner", "Status"] }),
+          model.riskSignals.map((risk) => E(Row, { key: risk.id, cells: [risk.title, risk.area, risk.owner, E(StatusBadge, { status: risk.status })] }))
+        )
+      )
+    ),
+    E(
+      "div",
+      { className: "two-column" },
       E(
         Panel,
         { title: "Sequenced later" },
@@ -778,6 +862,16 @@ function WorkItem({ label, title, detail, status, owner }) {
 
 function WorkBucket({ title, count, body }) {
   return E("article", { className: "surface-card" }, E("span", { className: "mini-label" }, title), E("strong", { className: "bucket-count" }, count), E("p", null, body));
+}
+
+function SetupStep({ step }) {
+  return E(
+    "div",
+    { className: `setup-step setup-${step.status}` },
+    E("div", { className: "setup-status-dot", "aria-hidden": "true" }),
+    E("div", null, E("strong", null, step.title), E("p", null, step.detail)),
+    E(StatusBadge, { status: step.status === "blocked" ? "failing" : step.status === "complete" ? "closed" : step.status })
+  );
 }
 
 function TrustPreview({ model }) {
