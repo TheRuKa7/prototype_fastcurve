@@ -1,8 +1,8 @@
-# User Flow: Aegis SOC 2 And Trust Center Demo
+# User Flow: Aegis SOC 2 And Trust Center Journey
 
-## Primary Demo Path
+## Primary User Journey
 
-The demo starts with Maya, a GRC owner at Acme Financial Services, preparing for SOC 2 Type II. Aegis detects a high-severity AWS test failure, creates evidence, maps it to SOC 2 CC6.1, assigns remediation to Ethan in engineering, generates an MCP remediation snippet, refreshes the auditor snapshot, and updates the Trust Center once the issue is resolved.
+The primary user journey starts with Maya, a GRC owner at Acme Financial Services, preparing for SOC 2 Type II. Aegis detects a high-severity AWS test failure, creates evidence, maps it to SOC 2 CC6.1, assigns remediation to Ethan in engineering, generates an MCP remediation snippet, refreshes the auditor snapshot, and updates the Trust Center once the issue is resolved.
 
 ## Navigation
 
@@ -14,7 +14,7 @@ The simplified IA has five hubs:
 4. Trust Center
 5. Platform
 
-Old deep links from the previous prototype render equivalent hub views so the Netlify deployment remains resilient.
+Old deep links from earlier routes render equivalent hub views so the Netlify deployment remains resilient.
 
 ## Flow
 
@@ -85,7 +85,7 @@ User sees:
 - The sidebar has five primary entries.
 - Every page has one clear primary action.
 - Trust Center and MCP feel like hero differentiators.
-- The prototype covers the original PDF's CCM chain:
+- The product journey covers the original PDF's CCM chain:
 
 ```text
 Signal -> Evidence -> Control -> Assessment -> Framework -> Compliance Status

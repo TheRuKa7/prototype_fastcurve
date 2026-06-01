@@ -6,6 +6,7 @@ This workspace contains a clickable Aegis prototype: a simplified Continuous Tru
 
 - Prototype repository: https://github.com/TheRuKa7/prototype_fastcurve
 - Primary supporting document: [docs/submission-supporting-document.md](docs/submission-supporting-document.md)
+- Product demo user guide: [docs/product-demo-user-guide.md](docs/product-demo-user-guide.md)
 - Product docs: PRD, user flow, RFC, and completeness matrix in [docs](docs)
 - Optional architecture diagrams: included in the supporting document
 
@@ -45,7 +46,7 @@ The build script copies the static app into `dist/` and creates an SPA redirect 
 
 ## Main Walkthrough
 
-Overview -> My Work -> MCP remediation -> Compliance auditor snapshot -> Trust Center buyer access -> Platform extensibility
+Overview -> My Work remediation -> Compliance auditor snapshot -> Trust Center buyer access -> Platform extensibility
 
 The core chain is:
 
@@ -53,10 +54,10 @@ The core chain is:
 Signal -> Evidence -> Control -> Assessment -> Framework -> Compliance Status
 ```
 
-## Demo Script
+## Review Walkthrough
 
-1. Start on Overview and point out the SOC 2-first wedge.
-2. Click `Fix failing SOC 2 test`.
+1. Start on Overview and point out the SOC 2-first command center.
+2. Click `Open remediation queue`.
 3. Use My Work to start the fix, mark it ready for review, and run the check.
 4. Open Compliance to show the auditor snapshot and evidence states.
 5. Open Trust Center to approve gated SOC 2 access and a cited AI answer.

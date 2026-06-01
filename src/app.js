@@ -357,9 +357,9 @@ function Sidebar({ route }) {
     E(
       "div",
       { className: "sidebar-footer" },
-      E("span", { className: "mini-label" }, "Wedge"),
-      E("strong", null, "SOC 2 for mid-market SaaS"),
-      E("span", null, "Trust Center + MCP remediation")
+      E("span", { className: "mini-label" }, "Active program"),
+      E("strong", null, "SOC 2 Type II"),
+      E("span", null, "Q2 auditor handoff")
     )
   );
 }
@@ -369,7 +369,7 @@ function TopBar({ actions }) {
     "header",
     { className: "top-bar" },
     E("div", { className: "search-box" }, E("span", null, "Search tests, controls, evidence"), E("kbd", null, "/")),
-    E("div", { className: "top-actions" }, E("span", { className: "env-pill" }, "Acme Financial Services"), E("button", { className: "ghost-button", onClick: actions.reset }, "Reset demo"), E("div", { className: "avatar" }, "MP"))
+    E("div", { className: "top-actions" }, E("span", { className: "env-pill" }, "Acme Financial Services"), E("button", { className: "ghost-button", onClick: actions.reset }, "Reset workspace"), E("div", { className: "avatar" }, "MP"))
   );
 }
 
@@ -378,43 +378,44 @@ function OverviewPage({ route, model }) {
     "section",
     null,
     E(PageHeader, {
-      eyebrow: "Aegis cockpit",
-      title: "SOC 2 readiness without the audit scramble",
-      description: "One guided path from live infrastructure signal to evidence, control status, engineer remediation, auditor snapshot, and Trust Center proof.",
-      actions: [E(ActionButton, { key: "fix", route, to: "/work", label: "Fix failing SOC 2 test" })]
+      eyebrow: "Program overview",
+      title: "SOC 2 readiness command center",
+      description: "Track Acme's SOC 2 program from connected systems to auditor handoff and buyer-facing trust proof.",
+      actions: [E(ActionButton, { key: "fix", route, to: "/work", label: "Open remediation queue" })]
     }),
     E(
       "div",
       { className: "metric-grid" },
       E(MetricCard, { label: "SOC 2 readiness", value: `${model.metrics.readiness}%`, detail: model.demo.resolved ? "Ready for auditor handoff" : "Blocked by S3 encryption" }),
       E(MetricCard, { label: "Automated evidence", value: `${model.metrics.automation}%`, detail: "Evidence collected from APIs" }),
-      E(MetricCard, { label: "Failing tests", value: model.metrics.failingTests, detail: model.metrics.auditReady }),
-      E(MetricCard, { label: "Security review deflection", value: model.metrics.trustDeflection, detail: `Questionnaire turnaround ${model.metrics.questionnaireTime}` })
+      E(MetricCard, { label: "Open findings", value: model.metrics.failingTests, detail: model.metrics.auditReady }),
+      E(MetricCard, { label: "Buyer review deflection", value: model.metrics.trustDeflection, detail: `Questionnaire turnaround ${model.metrics.questionnaireTime}` })
     ),
     E(
       "div",
       { className: "two-column" },
       E(
         Panel,
-        { title: "Primary demo path" },
+        { title: "SOC 2 launch plan" },
         E(FlowRail, {
           steps: [
-            ["Signal", "AWS reports encryption disabled on prod-audit-logs."],
-            ["Evidence", "Aegis stores an AWS config snapshot with timestamp and owner."],
-            ["Control", "SOC 2 CC6.1 fails and creates remediation work."],
-            ["MCP fix", "Engineer receives Terraform and CLI guidance in their IDE."],
-            ["Trust", "Auditor snapshot and Trust Center update after approval."]
+            ["Connect systems", "AWS, GitHub, Okta, HRIS, MDM, and Jira are connected to automate evidence."],
+            ["Confirm scope", "Production systems, people, devices, repos, and policies are scoped for SOC 2 Type II."],
+            ["Monitor controls", "Aegis evaluates continuous tests and refreshes control status on every sync."],
+            ["Resolve findings", "Owners receive clear remediation work with ticket and IDE guidance."],
+            ["Handoff audit", "Frozen evidence snapshots keep the auditor view stable."],
+            ["Publish trust", "Approved posture and gated documents are shared through Trust Center."]
           ]
         })
       ),
       E(
         Panel,
-        { title: "What changed from a generic GRC shell" },
+        { title: "Program priorities" },
         E("div", { className: "decision-list" },
-          E(Decision, { title: "Narrow wedge", body: "SOC 2 Type II for 50 to 500 person SaaS companies." }),
-          E(Decision, { title: "Revenue loop", body: "Trust Center deflects questionnaires and helps close enterprise deals." }),
-          E(Decision, { title: "Developer-native remediation", body: "MCP and IDE fixes are a headline feature, not an admin-only workflow." }),
-          E(Decision, { title: "API reliability", body: "Concurrent token rotation avoids cascading 401s during distributed syncs." })
+          E(Decision, { title: "Audit-ready by default", body: "Keep evidence fresh continuously instead of rebuilding the packet before fieldwork." }),
+          E(Decision, { title: "Owners know what to fix", body: "Findings route to the accountable engineer with resource, control, and remediation context." }),
+          E(Decision, { title: "Trust supports sales", body: "Approved reports, live badges, and cited answers reduce buyer security-review back-and-forth." }),
+          E(Decision, { title: "Extensible by design", body: "Unsupported tools can still feed monitoring through the Custom Resources API." })
         )
       )
     ),
@@ -422,7 +423,15 @@ function OverviewPage({ route, model }) {
       "div",
       { className: "two-column" },
       E(Panel, { title: "Current blocker" }, E(TestHero, { test: model.primaryTest, model }), E("div", { className: "panel-actions" }, E(ActionButton, { route, to: "/work", label: "Open My Work" }))),
-      E(Panel, { title: "Completeness snapshot" }, E(CompletenessList, null))
+      E(
+        Panel,
+        { title: "Audit handoff" },
+        E("div", { className: "decision-list" },
+          E(Decision, { title: "Auditor window", body: model.demo.resolved ? "SOC 2 Q2 evidence snapshot is ready for review." : "Snapshot waits on one high-severity finding." }),
+          E(Decision, { title: "Trust Center", body: model.demo.resolved ? "SOC 2 report access and buyer answers are approved." : "Buyer-facing proof stays gated until the blocker is resolved." }),
+          E(Decision, { title: "Next milestone", body: "Close the S3 finding, refresh the auditor snapshot, then publish approved Trust Center posture." })
+        )
+      )
     )
   );
 }
@@ -494,8 +503,8 @@ function WorkPage({ route, model, actions }) {
     null,
     E(PageHeader, {
       eyebrow: "My Work",
-      title: "Engineer tasks without a compliance portal detour",
-      description: "Aegis groups urgent work and gives engineers exact fixes through Jira, terminal commands, and MCP tools.",
+      title: "Remediation queue",
+      description: "Prioritized findings, owner context, and fix guidance for the work blocking audit readiness.",
       actions: [E(ActionButton, { key: "trust", route, to: "/trust-center", label: "See Trust Center impact", variant: "secondary" })]
     }),
     E(
@@ -541,8 +550,8 @@ function TrustCenterPage({ model, actions }) {
     null,
     E(PageHeader, {
       eyebrow: "Trust Center",
-      title: "Turn compliance posture into faster enterprise deals",
-      description: "Buyers self-serve approved security proof, request gated documents, and ask cited AI questions against the approved knowledge base.",
+      title: "Customer-facing Trust Center",
+      description: "Share approved security posture, gated reports, and cited answers with prospects from one controlled workspace.",
       actions: [E("button", { key: "approve", className: "primary-button", onClick: actions.approveTrust }, "Approve SOC 2 access")]
     }),
     E(
@@ -592,8 +601,8 @@ function PlatformPage({ model }) {
     null,
     E(PageHeader, {
       eyebrow: "Platform",
-      title: "Extensible trust infrastructure",
-      description: "The advanced platform features are concise but visible: integrations, Custom Resources API, concurrent token rotation, MCP, audit log, and future TPRM.",
+      title: "Platform settings",
+      description: "Manage integrations, custom resources, API token rotation, MCP tools, and the audit log that power continuous trust.",
       actions: [E("a", { key: "tokens", className: "primary-button", href: "#token-rotation" }, "Review token rotation")]
     }),
     E(
@@ -678,14 +687,6 @@ function Decision({ title, body }) {
 
 function TestHero({ test, model }) {
   return E("div", { className: "test-hero" }, E(StatusBadge, { status: test.status }), E("h3", null, test.name), E("p", null, test.fix), E("div", { className: "tag-list" }, [test.framework, test.control, model.people[test.owner].name].map((tag) => E("span", { className: "tag", key: tag }, tag))));
-}
-
-function CompletenessList() {
-  return E("div", { className: "decision-list" },
-    E(Decision, { title: "Product Demo", body: "Navigation, major module hubs, dashboard, assessment lifecycle, and cross-module relationships are represented." }),
-    E(Decision, { title: "CCM Deep Dive", body: "Signal, evidence, control monitoring, findings, integrations, posture, alerts, and reporting are visible." }),
-    E(Decision, { title: "Product Documentation", body: "PRD, user flow, RFC, completeness matrix, and submission document cover assumptions and trade-offs." })
-  );
 }
 
 function WorkItem({ label, title, detail, status, owner }) {

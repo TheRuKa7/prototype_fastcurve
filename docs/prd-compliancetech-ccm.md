@@ -23,8 +23,8 @@ Signal -> Evidence -> Control -> Assessment -> Framework -> Compliance Status
 
 - The first wedge is mid-market B2B SaaS companies with 50 to 500 employees pursuing their first SOC 2 Type II.
 - The buyer already has common SaaS and infrastructure systems: AWS, GitHub, Okta, an HRIS, an MDM, and Jira or Linear.
-- The case-study prototype is evaluated on product thinking, workflow clarity, and demo completeness, not production backend depth.
-- Trust Center and MCP remediation are the strongest differentiators and should be visible in the first demo path.
+- The MVP should prioritize product workflow clarity over broad GRC module breadth.
+- Trust Center and MCP remediation are the strongest differentiators and should be visible in the primary customer workflow.
 - TPRM, privacy, and enterprise business-unit scoping matter later, but they are not required to win the first SOC 2 wedge.
 
 ## Domain Model
@@ -82,7 +82,7 @@ Signal -> Evidence -> Control -> Assessment -> Framework -> Compliance Status
 
 ## MVP Experience
 
-The prototype demonstrates:
+Aegis supports:
 
 1. A failing SOC 2 control from AWS evidence.
 2. Evidence mapping into SOC 2 readiness.
@@ -93,6 +93,5 @@ The prototype demonstrates:
 
 ## Trade-Offs
 
-- The demo uses static mock data and client-side state because the assignment evaluates product thinking, UX, and workflow coherence rather than backend completeness.
 - Trust Center and MCP receive more emphasis than TPRM because they are the updated PRD's sharpest differentiators.
 - Vendor/risk/privacy areas are acknowledged as future expansion but intentionally not deeply implemented.

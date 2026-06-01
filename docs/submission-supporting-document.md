@@ -8,7 +8,7 @@ Prototype repository: https://github.com/TheRuKa7/prototype_fastcurve
 
 Aegis is a Continuous Trust Management platform for mid-market B2B SaaS companies pursuing their first SOC 2 Type II. It continuously ingests live signals from cloud, identity, code, HR, MDM, and ticketing tools; converts those signals into mapped evidence; rolls evidence into controls, assessments, frameworks, and compliance status; and uses the resulting trust posture to accelerate security reviews through a buyer-facing Trust Center.
 
-The prototype intentionally focuses on one strong wedge: SOC 2 readiness plus Trust Center revenue impact plus developer-native remediation. It avoids becoming a sprawling GRC suite in the demo.
+The product experience intentionally focuses on one strong wedge: SOC 2 readiness plus Trust Center revenue impact plus developer-native remediation. It avoids becoming a sprawling GRC suite.
 
 Core traceability chain:
 
@@ -21,30 +21,16 @@ Signal -> Evidence -> Control -> Assessment -> Framework -> Compliance Status
 | Expected item | Submission artifact |
 |---|---|
 | Prototype link | Netlify-ready repo at `TheRuKa7/prototype_fastcurve`; local verified route is `http://localhost:5173`. |
-| Supporting document | This document, plus PRD, user flow, RFC, and completeness matrix in `/docs`. |
+| Supporting document | This document, plus PRD, user flow, RFC, completeness matrix, and product demo guide in `/docs`. |
 | Optional architecture diagrams | Included below: services, data model, and integration layer. |
 
-## Demo Acceptance Review
+## Supporting Artifacts
 
-| Expected deliverable | PM verification |
-|---|---|
-| Navigation and information architecture | Five simple hubs: Overview, Compliance, My Work, Trust Center, Platform. |
-| Side menu and major module pages | All primary demo areas are reachable from the side navigation without a dense 12-module menu. |
-| Example assessment lifecycle | Compliance page shows scope, evidence collection, control monitoring, finding creation, snapshot, and reporting. |
-| Dashboard experience | Overview acts as the executive cockpit with readiness, automation, failing tests, audit readiness, and trust deflection. |
-| Cross-module relationships | The demo path links signal, evidence, control failure, remediation, auditor snapshot, and Trust Center posture. |
-| Control monitoring | SOC 2 tests evaluate AWS, GitHub, and Okta mock resources. |
-| Evidence collection | Automated evidence and document lifecycle are visible on Compliance. |
-| Integrations | Platform shows AWS, GitHub, Okta, Gusto, Jamf, and Jira. |
-| Compliance posture | SOC 2 readiness score and framework status are visible. |
-| Alerting and findings | My Work shows a named finding from a failed SOC 2 test and remediation workflow. |
-| Reporting | Auditor Snapshot and Trust Center surfaces cover internal and external reporting. |
-| Product vision | PRD positions Aegis as SOC 2-first continuous trust management. |
-| Assumptions | PRD documents wedge, buyer, systems, and prototype assumptions. |
-| Domain model | PRD and RFC define Resource, Test, TestRun, Evidence, Control, Assessment, Framework, Finding, Document, Snapshot, and API entities. |
-| MVP boundaries | PRD distinguishes P0, P1, and non-goals. |
-| Extensibility | Platform covers Custom Resources API, token rotation, MCP, and audit log. |
-| Trade-offs | PRD and RFC explain static mock data, SOC 2-first scope, and deferred TPRM/privacy/enterprise scope. |
+- Product demo guide: `docs/product-demo-user-guide.md`
+- Completeness matrix: `docs/completeness-matrix.md`
+- Product requirements: `docs/prd-compliancetech-ccm.md`
+- User flow: `docs/user-flow-compliancetech-ccm.md`
+- Prototype RFC: `docs/rfc-compliancetech-ccm-prototype.md`
 
 ## PM Narrative
 
@@ -113,16 +99,6 @@ flowchart TD
   Status --> Snapshot["Auditor snapshot"]
   Status --> TrustCenter["Trust Center posture"]
 ```
-
-## Demo Script
-
-1. Start on Overview and explain the SOC 2-first wedge.
-2. Click `Fix failing SOC 2 test`.
-3. In My Work, show Finding FIND-001, MCP tools, Terraform, and CLI fix output.
-4. Start the fix, mark it ready for review, and run the check.
-5. Open Compliance and show the assessment lifecycle, auditor snapshot, and exact chain from Signal to Compliance Status.
-6. Open Trust Center and show gated SOC 2 access, NDA approval, and cited AI answer.
-7. Open Platform and show integrations, Custom Resources API, token rotation, MCP server, audit log, and explicitly deferred TPRM/privacy scope.
 
 ## Known Prototype Limits
 
