@@ -435,8 +435,8 @@ function OverviewPage({ route, model }) {
     null,
     E(PageHeader, {
       eyebrow: "Program overview",
-      title: "SOC 2 readiness command center",
-      description: "Track Acme's SOC 2 program from connected systems to auditor handoff and buyer-facing trust proof.",
+      title: "Acme trust workspace",
+      description: "A single operating dashboard for SOC 2 readiness, open work, evidence health, auditor handoff, and buyer-facing trust.",
       actions: [E(ActionButton, { key: "fix", route, to: "/work", label: "Open remediation queue" })]
     }),
     E(
@@ -449,7 +449,77 @@ function OverviewPage({ route, model }) {
     ),
     E(
       "div",
-      { className: "two-column" },
+      { className: "dashboard-grid" },
+      E(
+        Panel,
+        { title: "Next best action" },
+        E("div", { className: "action-hero" },
+          E(StatusBadge, { status: model.demo.resolved ? "closed" : "failing" }),
+          E("h3", null, model.demo.resolved ? "SOC 2 blocker cleared" : "Close S3 encryption finding"),
+          E("p", null, model.demo.resolved ? "Refresh the auditor snapshot and share approved Trust Center materials with active buyers." : "One high-severity finding is blocking auditor handoff and Trust Center publication."),
+          E("div", { className: "panel-actions" },
+            E(ActionButton, { route, to: model.demo.resolved ? "/compliance" : "/work", label: model.demo.resolved ? "Review audit handoff" : "Fix finding" }),
+            E(ActionButton, { route, to: "/trust-center", label: "View Trust Center", variant: "secondary" })
+          )
+        )
+      ),
+      E(
+        Panel,
+        { title: "Program health" },
+        E("div", { className: "score-block" },
+          E(ScoreRing, { score: model.metrics.readiness }),
+          E("div", null,
+            E("h3", null, "SOC 2 Type II readiness"),
+            E("p", null, model.demo.resolved ? "Controls, evidence, and buyer proof are ready for review." : "The program is mostly ready, with one infrastructure finding to clear.")
+          )
+        ),
+        E("div", { className: "chain" }, ["Signal", "Evidence", "Control", "Assessment", "Framework", "Compliance Status"].map((item) => E("span", { key: item }, item)))
+      )
+    ),
+    E(
+      Panel,
+      { title: "Workspace shortcuts" },
+      E("div", { className: "shortcut-grid" },
+        E(ShortcutCard, { route, to: "/compliance", title: "Compliance", detail: "Controls, evidence, documents, assessment lifecycle, and auditor snapshot.", meta: `${model.metrics.readiness}% ready` }),
+        E(ShortcutCard, { route, to: "/work", title: "My Work", detail: "Findings, ownership, remediation state, and MCP-generated fix output.", meta: `${model.metrics.failingTests} open finding` }),
+        E(ShortcutCard, { route, to: "/trust-center", title: "Trust Center", detail: "Gated SOC 2 report, buyer activity, questionnaire workflow, and cited answers.", meta: `${model.metrics.trustDeflection} deflection` }),
+        E(ShortcutCard, { route, to: "/platform", title: "Platform", detail: "Integrations, Custom Resources API, token rotation, MCP server, and audit log.", meta: `${model.integrations.length} integrations` }),
+        E(ShortcutCard, { route, to: "/docs", title: "Docs", detail: "Submission brief, product requirements, user journey, RFC, and coverage matrix.", meta: "Interview ready" })
+      )
+    ),
+    E(
+      "div",
+      { className: "dashboard-grid three-up" },
+      E(
+        Panel,
+        { title: "Open work" },
+        E(WorkItem, { label: model.findings[0].label, title: model.findings[0].title, detail: model.findings[0].detail, status: model.findings[0].status, owner: model.people[model.findings[0].owner].name }),
+        E("div", { className: "panel-actions" }, E(ActionButton, { route, to: "/work", label: "Open queue", variant: "secondary" }))
+      ),
+      E(
+        Panel,
+        { title: "Evidence and audit" },
+        E("div", { className: "decision-list" },
+          E(Decision, { title: "Automated evidence", body: `${model.metrics.automation}% collected from connected systems.` }),
+          E(Decision, { title: "Auditor window", body: model.demo.resolved ? "SOC 2 Q2 evidence snapshot is ready for review." : "Snapshot waits on one high-severity finding." }),
+          E(Decision, { title: "Documents", body: `${model.documents.length} policies and evidence artifacts tracked with renewal state.` })
+        ),
+        E("div", { className: "panel-actions" }, E(ActionButton, { route, to: "/compliance", label: "Review evidence", variant: "secondary" }))
+      ),
+      E(
+        Panel,
+        { title: "Buyer trust" },
+        E("div", { className: "decision-list" },
+          E(Decision, { title: "Trust Center", body: model.demo.resolved ? "SOC 2 report access and buyer answers are approved." : "Buyer-facing proof stays gated until the blocker is resolved." }),
+          E(Decision, { title: "Questionnaires", body: `${model.metrics.trustDeflection} deflected with approved answers and gated docs.` }),
+          E(Decision, { title: "Active buyer", body: "ZenPay is waiting on SOC 2 report access for a $180K ARR opportunity." })
+        ),
+        E("div", { className: "panel-actions" }, E(ActionButton, { route, to: "/trust-center", label: "Open Trust Center", variant: "secondary" }))
+      )
+    ),
+    E(
+      "div",
+      { className: "dashboard-grid" },
       E(
         Panel,
         { title: "Setup progress" },
@@ -457,45 +527,12 @@ function OverviewPage({ route, model }) {
       ),
       E(
         Panel,
-        { title: "SOC 2 launch plan" },
-        E(FlowRail, {
-          steps: [
-            ["Connect systems", "AWS, GitHub, Okta, HRIS, MDM, and Jira are connected to automate evidence."],
-            ["Confirm scope", "Production systems, people, devices, repos, and policies are scoped for SOC 2 Type II."],
-            ["Monitor controls", "Aegis evaluates continuous tests and refreshes control status on every sync."],
-            ["Resolve findings", "Owners receive clear remediation work with ticket and IDE guidance."],
-            ["Handoff audit", "Frozen evidence snapshots keep the auditor view stable."],
-            ["Publish trust", "Approved posture and gated documents are shared through Trust Center."]
-          ]
-        })
-      )
-    ),
-    E(
-      "div",
-      { className: "two-column" },
-      E(
-        Panel,
-        { title: "Program priorities" },
-        E("div", { className: "decision-list" },
-          E(Decision, { title: "Audit-ready by default", body: "Keep evidence fresh continuously instead of rebuilding the packet before fieldwork." }),
-          E(Decision, { title: "Owners know what to fix", body: "Findings route to the accountable engineer with resource, control, and remediation context." }),
-          E(Decision, { title: "Trust supports sales", body: "Approved reports, live badges, and cited answers reduce buyer security-review back-and-forth." }),
-          E(Decision, { title: "Extensible by design", body: "Unsupported tools can still feed monitoring through the Custom Resources API." })
-        )
-      )
-    ),
-    E(
-      "div",
-      { className: "two-column" },
-      E(Panel, { title: "Current blocker" }, E(TestHero, { test: model.primaryTest, model }), E("div", { className: "panel-actions" }, E(ActionButton, { route, to: "/work", label: "Open My Work" }))),
-      E(
-        Panel,
-        { title: "Audit handoff" },
-        E("div", { className: "decision-list" },
-          E(Decision, { title: "Auditor window", body: model.demo.resolved ? "SOC 2 Q2 evidence snapshot is ready for review." : "Snapshot waits on one high-severity finding." }),
-          E(Decision, { title: "Trust Center", body: model.demo.resolved ? "SOC 2 report access and buyer answers are approved." : "Buyer-facing proof stays gated until the blocker is resolved." }),
-          E(Decision, { title: "Next milestone", body: "Close the S3 finding, refresh the auditor snapshot, then publish approved Trust Center posture." })
-        )
+        { title: "Integration health" },
+        E("div", { className: "simple-table compact" },
+          E(TableHeader, { columns: ["System", "Coverage", "Resources", "Status"] }),
+          model.integrations.map((integration) => E(Row, { key: integration.id, cells: [integration.name, integration.coverage, integration.resources, E(StatusBadge, { status: integration.status })] }))
+        ),
+        E("div", { className: "panel-actions" }, E(ActionButton, { route, to: "/platform", label: "Manage platform", variant: "secondary" }))
       )
     )
   );
@@ -862,6 +899,16 @@ function WorkItem({ label, title, detail, status, owner }) {
 
 function WorkBucket({ title, count, body }) {
   return E("article", { className: "surface-card" }, E("span", { className: "mini-label" }, title), E("strong", { className: "bucket-count" }, count), E("p", null, body));
+}
+
+function ShortcutCard({ route, to, title, detail, meta }) {
+  return E(
+    "a",
+    { className: "shortcut-card", href: to, onClick: linkTo(route, to) },
+    E("span", { className: "mini-label" }, meta),
+    E("strong", null, title),
+    E("p", null, detail)
+  );
 }
 
 function SetupStep({ step }) {

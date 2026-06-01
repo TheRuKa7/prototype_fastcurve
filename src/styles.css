@@ -149,6 +149,9 @@ a:focus-visible {
 .question-card,
 .snapshot-card,
 .trust-preview,
+.dashboard-grid,
+.shortcut-card,
+.shortcut-grid,
 .docs-layout,
 .docs-list,
 .doc-viewer,
@@ -307,10 +310,22 @@ kbd {
   margin-bottom: 18px;
 }
 
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  margin-bottom: 18px;
+}
+
+.dashboard-grid.three-up {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
 .metric-card,
 .panel,
 .surface-card,
-.integration-card {
+.integration-card,
+.shortcut-card {
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: var(--radius);
@@ -335,6 +350,46 @@ kbd {
 
 .metric-card p {
   margin: 0;
+}
+
+.action-hero {
+  padding: 2px 0 0;
+}
+
+.action-hero h3 {
+  margin-top: 12px;
+  font-size: 24px;
+}
+
+.shortcut-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.shortcut-card {
+  display: block;
+  padding: 16px;
+  text-decoration: none;
+  transition: border-color 160ms ease, transform 160ms ease, box-shadow 160ms ease;
+}
+
+.shortcut-card:hover {
+  border-color: rgba(15, 118, 110, 0.45);
+  transform: translateY(-2px);
+  box-shadow: 0 16px 36px rgba(17, 24, 39, 0.08);
+}
+
+.shortcut-card strong {
+  display: block;
+  margin: 8px 0;
+  font-size: 18px;
+}
+
+.shortcut-card p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.5;
 }
 
 .two-column {
@@ -814,7 +869,13 @@ kbd {
   }
 
   .metric-grid,
+  .dashboard-grid,
   .two-column {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .dashboard-grid.three-up,
+  .shortcut-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
@@ -836,6 +897,9 @@ kbd {
   .nav-list,
   .docs-list,
   .metric-grid,
+  .dashboard-grid,
+  .dashboard-grid.three-up,
+  .shortcut-grid,
   .two-column,
   .card-grid.three,
   .integration-grid {
